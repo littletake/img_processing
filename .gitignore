@@ -1,0 +1,12 @@
+# movie
+movie/*
+# exif_data
+exif_test/*
+# gpu_data
+code_gpu/gps_data/*
+
+# cache
+*.pyc
+.idea/*
+venv2/*
+
