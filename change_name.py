@@ -83,6 +83,6 @@ def save_img(img_name):
 
 if __name__ == "__main__":
     # 指定の画像のexif情報の閲覧
-    target = "./exif_test/target.jpg"
+    target = "./exif_test/test2.JPG"
     exif = get_exif_of_image(target)
     print(exif)

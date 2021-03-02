@@ -1,39 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# パッケージpiexifを使ってみる
-# このコードだとexifを新規で作成するものになってしまう、だから既存のexifに位置情報を追加することを考える。
+# パッケージpiexifを使って実装
 
-from PIL import Image
 import piexif
-import sys
-import os
 from fractions import Fraction
 
-# import change_name
-# import export_gps
+import export_gps
 
 
-def add_gpsinfo_to_exif(exif_dict, img_name, gps_data_path):
+def add_gpsinfo(img_name, gps_data_path, exif_dict):
     """
-    exifのGPS部分をexifに追加
-    1. exif_dictにgpsを追加
-    """
-    # TODO: export_gpsを使って適切なGPS情報を取得
-    gps_data = export_lat_long_jp(img_name, gps_data_path)
-
-    # TODO: gps_dataを付与
-
-    # return exif_dict
-
-
-# 画像のパスから画像のexif情報を辞書型で取得
-# GPSの部分だけを変更させる
-def make_gpsinfo(img_name, gps_data_name, exif_dict):
-    """
-    GPSInfoの部分を作成する関数
+    GPSInfoの部分を新たに作成し既存のexifに付与
     """
     gps_data = []
-    gps_data = export_gps.export_lat_long(img_name, gps_data_name)
+    gps_data = export_gps.export_lat_long_jp(img_name, gps_data_path)
     # 経緯の情報を整形
     lat_deg = change_to_deg(gps_data[0], ["S", "N"])
     lng_deg = change_to_deg(gps_data[1], ["W", "E"])
@@ -45,6 +25,7 @@ def make_gpsinfo(img_name, gps_data_name, exif_dict):
     lng_tuple = (change_to_rational(lng_deg[0]), change_to_rational(
         lng_deg[1]), change_to_rational(lng_deg[2]))
 
+    # TODO: NやEはbyte型にする必要がある。
     gps_ifd = {
         piexif.GPSIFD.GPSVersionID: exif_dict['GPS'][0],
         piexif.GPSIFD.GPSLatitudeRef: lat_deg[3],
@@ -53,7 +34,7 @@ def make_gpsinfo(img_name, gps_data_name, exif_dict):
         piexif.GPSIFD.GPSLongitude: lng_tuple,
     }
     exif_dict['GPS'] = {"GPS": gps_ifd}
-    print(exif_dict)
+    print(exif_dict["GPS"])
     exif_bytes = piexif.dump(exif_dict)
     return exif_bytes
 
@@ -84,12 +65,14 @@ def change_to_rational(value):
 
 
 if __name__ == '__main__':
-    DIR_PATH = os.getcwd()
-    # img_name = DIR_PATH + "/" + sys.argv[1]
-    img_name = "../exif_test/target.jpg"
-    exif_dic = piexif.load(img_name)
-    gps_info = exif_dic["GPS"]
-    print(gps_info)
+    img_name = "./exif_test/test2.jpg"
+    # exif_dic = piexif.load(img_name)
+    # gps_info = exif_dic["GPS"]
+    # print(gps_info)
+
+    gps_data_path = "./code_gps/gps_data/2019_9_15-9_19.csv"
+    exif_dict = piexif.load(img_name)
+    new_exif = add_gpsinfo(img_name, gps_data_path, exif_dict)
 
     # gps_data = DIR_PATH + "/" + sys.argv[2]
     # exif_bytes = make_gpsinfo(sys.argv[1], sys.argv[2], exif_dic)
