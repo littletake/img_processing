@@ -23,8 +23,11 @@ import sys
 import change_name
 import datetime
 
-# 写真の名前、gps情報のファイルパスを引数として対応する経緯を出力する関数
+
 def export_lat_long(img_name, gps_data_name):
+    """
+    写真の名前、gps情報のファイルパスを引数として対応する経緯を出力する関数
+    """
     DIR_PATH = os.getcwd()
     gps_data_list = []
 
@@ -34,7 +37,8 @@ def export_lat_long(img_name, gps_data_name):
     img_date_origin = change_name.get_date_from_image(img_name)
     img_date_and_time = img_date_origin.split(" ")
     img_date_list = img_date_and_time[0].split(":")
-    img_date = img_date_list[0] + "/" + img_date_list[1] + "/" + img_date_list[2]
+    img_date = img_date_list[0] + "/" + \
+        img_date_list[1] + "/" + img_date_list[2]
     img_time = img_date_and_time[1]
     img_time_list = img_time.split(":")
     # print(img_time)
@@ -68,7 +72,6 @@ def export_lat_long(img_name, gps_data_name):
         gps_time_list[num] = gps_date_and_time.split(" ")[1]
         print(gps_time_list[num])
 
-
     #     # 西経
     #     else:
     #         time_diff = (int(gps_longitude_list[num])* -1) / 15 + 9
@@ -101,16 +104,14 @@ def export_lat_long(img_name, gps_data_name):
     # else:
     #     print("No East Longitude")
 
-
-
     start_num = 0
     end_num = 0
-    ok_flag = 0 # 適切な位置情報が見つかったかどうかの指針
+    ok_flag = 0  # 適切な位置情報が見つかったかどうかの指針
     # 撮影日の範囲を検索
     for num_date in range(len(gps_date_list)):
-        if (gps_date_list[num_date] == img_date)and(start_num == 0):
+        if (gps_date_list[num_date] == img_date) and (start_num == 0):
             start_num = num_date
-        if (gps_date_list[num_date] != img_date)and(start_num != 0)and(end_num == 0):
+        if (gps_date_list[num_date] != img_date) and (start_num != 0) and (end_num == 0):
             end_num = num_date
     if end_num == 0:
         end_num = len(gps_date_list)
@@ -125,13 +126,15 @@ def export_lat_long(img_name, gps_data_name):
     # 適切な位置情報が見つからない場合
     if ok_flag == 0:
         date_val_list_img = img_time_comp.split(":")
-        date_val_img = int(date_val_list_img[0])*3600 + int(date_val_list_img[1])*60 +int(date_val_list_img[2])
-        min_diff = 86400 # 1日
+        date_val_img = int(
+            date_val_list_img[0])*3600 + int(date_val_list_img[1])*60 + int(date_val_list_img[2])
+        min_diff = 86400  # 1日
         min_num = 0
 
         for num in range(start_num, end_num):
             date_val_list_gps = gps_time_list[num].split(":")
-            date_val_gps = int(date_val_list_gps[0])*3600 + int(date_val_list_gps[1])*60 + int(date_val_list_gps[2])
+            date_val_gps = int(
+                date_val_list_gps[0])*3600 + int(date_val_list_gps[1])*60 + int(date_val_list_gps[2])
             diff = abs(date_val_gps - date_val_img)
             if min_diff >= diff:
                 min_diff = diff
@@ -145,11 +148,16 @@ def export_lat_long(img_name, gps_data_name):
 
     return gps_data_list
 
+
 def utc_to_jst(timestamp_utc, time_diff):
-    datetime_utc = datetime.datetime.strptime(timestamp_utc, "%Y/%m/%d %H:%M:%S")
-    datetime_jst = datetime_utc.astimezone(datetime.timezone(datetime.timedelta(hours=+time_diff)))
-    timestamp_jst = datetime.datetime.strftime(datetime_jst, '%Y/%m/%d %H:%M:%S')
+    datetime_utc = datetime.datetime.strptime(
+        timestamp_utc, "%Y/%m/%d %H:%M:%S")
+    datetime_jst = datetime_utc.astimezone(
+        datetime.timezone(datetime.timedelta(hours=+time_diff)))
+    timestamp_jst = datetime.datetime.strftime(
+        datetime_jst, '%Y/%m/%d %H:%M:%S')
     return timestamp_jst
+
 
 if __name__ == '__main__':
     img_name = sys.argv[1]

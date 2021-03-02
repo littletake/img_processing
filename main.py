@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# testディレクトリの写真の名前を変換するプログラム
 
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -54,7 +55,8 @@ def make_name(img_name):
     img_time = img_date_list[1].split(":")
 
     # ：を＿に変える
-    img_date = img_date_not_time[0] + "_" + img_date_not_time[1] + "_" + img_date_not_time[2]
+    img_date = img_date_not_time[0] + "_" + \
+        img_date_not_time[1] + "_" + img_date_not_time[2]
     img_time = img_time[0] + "_" + img_time[1] + "_" + img_time[2]
     img_full_name = img_date + "_" + img_time
 
