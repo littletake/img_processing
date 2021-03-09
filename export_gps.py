@@ -10,7 +10,9 @@ import datetime
 import os
 import pandas as pd
 
-import change_name
+import name
+
+HOUR = 3601
 
 
 def select_correct_gpsinfo(gps_date_list, gps_time_list, gps_latitude_list, gps_longitude_list,
@@ -40,12 +42,13 @@ def select_correct_gpsinfo(gps_date_list, gps_time_list, gps_latitude_list, gps_
             ok_flag = 1
 
     # 適切な位置情報が見つからない場合
-    # 時刻さが一番小さいものを選択
+    # 時刻差が一番小さいものを選択
+    # ただし、最小で一時間以上の場合は無該当として処理
     if ok_flag == 0:
         date_val_list_img = img_time.split(":")
-        date_val_img = int(
-            date_val_list_img[0]) * 3600 + int(date_val_list_img[1]) * 60 + int(date_val_list_img[2])
-        min_diff = 86400  # 1日
+        date_val_img = int(date_val_list_img[0]) * 3600 \
+            + int(date_val_list_img[1]) * 60 + int(date_val_list_img[2])
+        min_diff = HOUR  # 1時間
         min_num = 0
 
         for num in range(start_num, end_num):
@@ -57,20 +60,23 @@ def select_correct_gpsinfo(gps_date_list, gps_time_list, gps_latitude_list, gps_
                 min_diff = diff
                 min_num = num
 
-        img_latitude = gps_latitude_list[min_num]
-        img_longitude = gps_longitude_list[min_num]
+        if min_diff == HOUR:
+            # 該当無し
+            img_latitude = 0
+            img_longitude = 0
+        else:
+            img_latitude = gps_latitude_list[min_num]
+            img_longitude = gps_longitude_list[min_num]
     return [img_latitude, img_longitude]
 
 
-def search(gps_data_path, img_date, img_time):
+def search(gps_data, img_date, img_time):
     """
     時刻的に一番近い位置情報を特定する処理
     1. 時刻が等しい情報がないか検索。あればそれを使う
     2. ない場合は時刻差が一番小さいものを使う
     # TODO: 時差を考慮できるようにする
     """
-    # input
-    gps_data = pd.read_csv(gps_data_path).astype(str)
     # 各データをリスト化
     gps_date_list = gps_data.loc[:, 'Date'].astype(str).tolist()
     gps_time_list = gps_data.loc[:, ' Time'].astype(str).tolist()
@@ -108,7 +114,7 @@ def search(gps_data_path, img_date, img_time):
     )
 
 
-def export_lat_long_jp(img_name, gps_data_path):
+def export_lat_long_jp(img_name, gps_data):
     """
     写真の名前、gps情報のファイルパスを引数として対応する経緯を出力する関数（日本版）
     """
@@ -117,7 +123,7 @@ def export_lat_long_jp(img_name, gps_data_path):
 
     # 1.写真読み込みと加工
     # TODO: 時刻を整形する必要がある。csvは2019/8/10, 10:42:22なのでそれに合わせる
-    img_date_origin = change_name.get_date_from_image(img_name)
+    img_date_origin = name.get_date_from_image(img_name)
     img_date_and_time = img_date_origin.split(" ")
     img_date_list = img_date_and_time[0].split(":")
     img_date_edited = img_date_list[0] + "/" + \
@@ -129,7 +135,7 @@ def export_lat_long_jp(img_name, gps_data_path):
     # print(img_time_list)
 
     # TODO: 原則同じ日付のGPSファイルから検索する
-    return search(gps_data_path, img_date_edited, img_time_edited)
+    return search(gps_data, img_date_edited, img_time_edited)
 
 
 def export_lat_long(img_name, gps_data_name):
@@ -142,7 +148,7 @@ def export_lat_long(img_name, gps_data_name):
     # 1.写真読み込みと加工
     img_name = DIR_PATH + "/" + img_name
     # 時刻を整形。csvは2019/8/10, 10:42:22のようになっている
-    img_date_origin = change_name.get_date_from_image(img_name)
+    img_date_origin = name.get_date_from_image(img_name)
     img_date_and_time = img_date_origin.split(" ")
     img_date_list = img_date_and_time[0].split(":")
     img_date = img_date_list[0] + "/" + \

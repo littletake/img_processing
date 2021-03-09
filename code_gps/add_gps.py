@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# pyexiv2パッケージを使用
 # gps情報を写真のexifに付与する
 # 参考サイト : https://www.gis-py.com/entry/2016/01/20/173253
 
