@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+# TODO: 依存方向が間違っている気がする
 from PIL import Image
 import piexif
 
-from name import create_new_name
-import add_gps_2
+from utils.name import create_new_name
+from utils.add_gps import add_gpsinfo
 
 
 def create_name_and_save(img_name):
@@ -30,7 +31,7 @@ def save_img(img_name, gps_data):
 
     # 新規写真にジオタグを付与
     exif_dict = piexif.load(img_name)
-    exif_bytes = add_gps_2.add_gpsinfo(img_name, gps_data, exif_dict)
+    exif_bytes = add_gpsinfo(img_name, gps_data, exif_dict)
     piexif.insert(exif_bytes, new_img_name)
 
 

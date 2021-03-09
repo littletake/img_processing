@@ -4,7 +4,7 @@
 import piexif
 from fractions import Fraction
 
-import export_gps
+from utils.export_gps import export_lat_long_jp
 
 
 def add_gpsinfo(img_name, gps_data, exif_dict):
@@ -12,7 +12,7 @@ def add_gpsinfo(img_name, gps_data, exif_dict):
     GPSInfoの部分を新たに作成し既存のexifに付与
     """
     # GPSデータから画像の日時を使って適切な経緯情報を選択
-    gps_data = export_gps.export_lat_long_jp(img_name, gps_data)
+    gps_data = export_lat_long_jp(img_name, gps_data)
 
     if gps_data == [0, 0]:
         # 該当無しの場合
