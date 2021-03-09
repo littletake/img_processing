@@ -12,6 +12,7 @@ exif_test/*
 
 # gps_data
 *.csv
+*.gpx
 
 # picture
 *.jpeg

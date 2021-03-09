@@ -9,7 +9,7 @@ import piexif
 DIR_PATH = os.getcwd()
 
 
-def get_exif_of_image(file):
+def extract_exif(file):
     """
     指定した画像のEXIFデータを取り出す関数
     """
@@ -38,11 +38,11 @@ def get_date_from_image(file):
 
     # get_exif_of_imageの戻り値のうち
     # 日付データのみを取得して返す
-    exif_table = get_exif_of_image(file)
+    exif_table = extract_exif(file)
     return exif_table.get("DateTimeOriginal")
 
 
-def make_name(img_name):
+def create_new_name(img_name):
     """
     適切な形に名前を作成する関数(保存するフォルダも作成)
     """
@@ -74,7 +74,7 @@ def save_img(img_name):
     画像を保存する関数(piexifでexif情報のコピー)
     """
     img = Image.open(img_name)
-    new_img_name = make_name(img_name)
+    new_img_name = create_new_name(img_name)
     with Image.new(img.mode, img.size) as dst:
         dst.putdata(img.getdata())
         dst.save(new_img_name, quality=95)
@@ -84,5 +84,5 @@ def save_img(img_name):
 if __name__ == "__main__":
     # 指定の画像のexif情報の閲覧
     target = "./exif_test/test2.JPG"
-    exif = get_exif_of_image(target)
+    exif = extract_exif(target)
     print(exif)

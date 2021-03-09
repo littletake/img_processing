@@ -79,22 +79,22 @@ def search(gps_data_path, img_date, img_time):
 
     # TODO: GPSの保存の形式に応じて対応すべき
     # TODO: 時差の調節はここで行う
-    # このときはタイでの使用を考えており、ロガーが国際標準時刻であったためその分の対応が必要だった。
+    # コード製作時はタイでの使用を考えており、ロガーが国際標準時刻であったためその分の対応が必要だった。
     # 国内で使用し、ロガーの保存形式も日本標準時刻であれば以下の処理は不要
 
     # ---
     # ロガーの保存形式合わせるための処理
-    for num in range(len(gps_longitude_list)):
-        gps_date_and_time = gps_date_list[num] + " " + gps_time_list[num]
-        # print(gps_time_list[num])
-        # TODO: ここで時差を計算している。国内で使用する場合はいらない。
-        time_diff = int(int(gps_longitude_list[num]) / 15)
-        # print(time_diff)
-        # TODO: 標準時刻（utc）を日本時刻（jst）に直している。
-        gps_date_and_time = utc_to_jst(gps_date_and_time, time_diff)
-        gps_date_list[num] = gps_date_and_time.split(" ")[0]
-        gps_time_list[num] = gps_date_and_time.split(" ")[1]
-        # print(gps_time_list[num])
+    # for num in range(len(gps_longitude_list)):
+    #     gps_date_and_time = gps_date_list[num] + " " + gps_time_list[num]
+    #     # print(gps_time_list[num])
+    #     # TODO: ここで時差を計算している。国内で使用する場合はいらない。
+    #     time_diff = int(int(gps_longitude_list[num]) / 15)
+    #     # print(time_diff)
+    #     # TODO: 標準時刻（utc）を日本時刻（jst）に直している。
+    #     gps_date_and_time = utc_to_jst(gps_date_and_time, time_diff)
+    #     gps_date_list[num] = gps_date_and_time.split(" ")[0]
+    #     gps_time_list[num] = gps_date_and_time.split(" ")[1]
+    #     # print(gps_time_list[num])
     # ---
 
     # 特定
