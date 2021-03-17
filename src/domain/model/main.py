@@ -1,13 +1,15 @@
+# domain層
+# ロジックの根幹
+from typing import Any
+
+
 class Exif(object):
-    def __init__(self, gps: str) -> None:
-        self.gps = gps
-
-
-class Img(Exif):
     def __init__(
         self,
         name: str,
-        gps: str
+        gps: Any,  # gpsデータのない場合はNoneになるため
+        path_original_img: str,
     ) -> None:
-        self.name: str = name
-        self.exif: Exif = (gps)
+        self.name = name
+        self.gps = gps
+        self.path_original_img = path_original_img

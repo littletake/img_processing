@@ -8,7 +8,9 @@ from tqdm import tqdm
 
 from utils.save import save_img_only, save_img
 
-"""args"""
+# ---
+# args
+# ---
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--img",
@@ -24,7 +26,9 @@ args = parser.parse_args()
 dict_args = vars(args)
 
 
-"""path"""
+# ---
+# path
+# ---
 DIR_PATH = os.path.dirname(__file__)
 if dict_args["img"] is None:
     raise TypeError("対象画像のディレクトリを指定してください")
@@ -36,7 +40,9 @@ if not os.path.exists(DIR_PATH_IMG):
 img_file_list = sorted(glob.glob(DIR_PATH_IMG + "/*"))
 
 
-"""code"""
+# ---
+# code
+# ---
 if dict_args["gps"] is None:
     # gpsデータ無し
     for num in tqdm(range(len(img_file_list))):
