@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-
 import argparse
-import glob
 import os
-import pandas as pd
-from tqdm import tqdm
 
-from utils.save import save_img_only, save_img
+from src.domain.repository.main import Repository
+from src.usecase.main import Usecase_abs, Usecase
+from src.interface.main import Interface_abs, Interface
+from src.infra.main import SimplyPersistence, GPSPersistence
 
 # ---
 # args
@@ -25,34 +24,21 @@ parser.add_argument(
 args = parser.parse_args()
 dict_args = vars(args)
 
-
-# ---
 # path
-# ---
 DIR_PATH = os.path.dirname(__file__)
-if dict_args["img"] is None:
-    raise TypeError("対象画像のディレクトリを指定してください")
-
-DIR_PATH_IMG = os.path.join(DIR_PATH, dict_args["img"])
-if not os.path.exists(DIR_PATH_IMG):
-    raise TypeError("{} は存在しません". format(DIR_PATH_IMG))
-
-img_file_list = sorted(glob.glob(DIR_PATH_IMG + "/*"))
-
 
 # ---
-# code
+# object
 # ---
 if dict_args["gps"] is None:
-    # gpsデータ無し
-    for num in tqdm(range(len(img_file_list))):
-        save_img_only(img_file_list[num])
+    repo: Repository = SimplyPersistence()
 else:
-    # gpsデータ有り
-    FILE_PATH_GPS = os.path.join(DIR_PATH, dict_args["gps"])
-    if not os.path.exists(FILE_PATH_GPS):
-        raise TypeError("{} は存在しません". format(FILE_PATH_GPS))
-    gps_data = pd.read_csv(FILE_PATH_GPS).astype(str)
+    repo: Repository = GPSPersistence()
+usecase: Usecase_abs = Usecase(repo)
+interface: Interface_abs = Interface(usecase)
 
-    for num in tqdm(range(len(img_file_list))):
-        save_img(img_file_list[num], gps_data)
+# 実行
+interface.create(
+    DIR_PATH,
+    dict_args
+)
